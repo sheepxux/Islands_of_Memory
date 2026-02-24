@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 6142ad1cfd39f2f4d9a6b4fbc8125fd1
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 210140
+  packageName: 3D Character (010) - Old Woman - (Animated) - Low Poly - FBX
+  packageVersion: 1.1
+  assetPath: Assets/Puxxe_Studio/3D_Low_Characters_V2/Scripts/PlayerControllDemo.cs
+  uploadId: 545503
