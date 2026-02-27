@@ -1,10 +1,8 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
 public class PuzzlePickup : MonoBehaviour
 {
     [Header("Which piece is this? 0=Winter,1=Autumn,2=Summer,3=Last")]
-    [Range(0, 3)]
     public int pieceIndex = 0;
 
     [Header("Pickup Settings")]
@@ -13,49 +11,80 @@ public class PuzzlePickup : MonoBehaviour
 
     [Header("References")]
     public PuzzleProgress progress;
+    public PickupGlowPulse glow;
 
-    private bool playerInside = false;
+    [Header("Distance Brightness")]
+    public Transform distanceTarget;
+    public float nearDistance = 0.8f;
+    public float farDistance = 2.5f;
 
-    private void Reset()
+    [Header("Behaviour")]
+    public bool destroyOnPickup = true;
+    public GameObject puzzleVisual;
+    public AudioSource pickupSfx;
+
+    private bool playerInside;
+    private Transform playerTf;
+
+    void Start()
     {
-        var col = GetComponent<Collider>();
-        col.isTrigger = true;
+        if (glow != null) glow.Hide();
+
+        if (distanceTarget == null)
+            distanceTarget = transform;
+
+        if (puzzleVisual == null && transform.childCount > 0)
+            puzzleVisual = transform.GetChild(0).gameObject;
     }
 
-    private void Update()
+    void Update()
     {
+        if (playerInside && glow != null && playerTf != null)
+        {
+            float d = Vector3.Distance(playerTf.position, distanceTarget.position);
+            float factor = Mathf.InverseLerp(farDistance, nearDistance, d);
+            glow.SetDistanceFactor(factor);
+        }
+
         if (!pickupOnTrigger) return;
         if (!playerInside) return;
 
         if (Input.GetKeyDown(pickupKey))
-            DoPickup();
+            TryPickup();
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
-        if (!pickupOnTrigger) return;
-        if (other.CompareTag("Player"))
-            playerInside = true;
-    }
+        if (!other.CompareTag("Player")) return;
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (!pickupOnTrigger) return;
-        if (other.CompareTag("Player"))
-            playerInside = false;
-    }
+        playerInside = true;
+        playerTf = other.transform;
 
-    private void DoPickup()
-    {
-        if (progress == null)
+        if (glow != null)
         {
-            Debug.LogWarning("[PuzzlePickup] progress is NULL.");
-            return;
+            glow.Show();
+            glow.SetDistanceFactor(0f);
         }
+    }
 
-        progress.UnlockPiece(pieceIndex);
-        Debug.Log($"Picked puzzle piece: {pieceIndex}");
+    void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag("Player")) return;
 
-        gameObject.SetActive(false);
+        playerInside = false;
+        playerTf = null;
+
+        if (glow != null) glow.Hide();
+    }
+
+    private void TryPickup()
+    {
+        if (progress != null) progress.UnlockPiece(pieceIndex);
+        if (pickupSfx != null) pickupSfx.Play();
+
+        if (glow != null) glow.Hide();
+        if (puzzleVisual != null) puzzleVisual.SetActive(false);
+
+        if (destroyOnPickup) Destroy(gameObject);
     }
 }
