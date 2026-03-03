@@ -144,13 +144,8 @@ Future development will expand to:
 
 ## 🎥 Demo Video
 
-(Insert YouTube or Drive link here)
-
----
-
-## 📄 Game Design Report
-
-See accompanying coursework report document.
+YouTube (Unlisted):  
+https://youtu.be/zsJpYRZA080
 
 ---
 
