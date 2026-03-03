@@ -145,7 +145,7 @@ Future development will expand to:
 ## 🎥 Demo Video
 
 YouTube (Unlisted):  
-https://youtu.be/zsJpYRZA080
+[https://youtu.be/zsJpYRZA080](https://www.youtube.com/watch?v=zsJpYRZAO80)
 
 ---
 
