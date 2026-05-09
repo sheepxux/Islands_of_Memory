@@ -24,11 +24,13 @@ public class PuzzlePickup : MonoBehaviour
     public AudioSource pickupSfx;
 
     private bool playerInside;
+    private bool collected;
     private Transform playerTf;
 
-    void Start()
+    private void Start()
     {
-        if (glow != null) glow.Hide();
+        if (glow != null)
+            glow.Hide();
 
         if (distanceTarget == null)
             distanceTarget = transform;
@@ -37,7 +39,7 @@ public class PuzzlePickup : MonoBehaviour
             puzzleVisual = transform.GetChild(0).gameObject;
     }
 
-    void Update()
+    private void Update()
     {
         if (playerInside && glow != null && playerTf != null)
         {
@@ -48,14 +50,16 @@ public class PuzzlePickup : MonoBehaviour
 
         if (!pickupOnTrigger) return;
         if (!playerInside) return;
+        if (collected) return;
 
         if (Input.GetKeyDown(pickupKey))
             TryPickup();
     }
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
+        if (collected) return;
 
         playerInside = true;
         playerTf = other.transform;
@@ -67,24 +71,44 @@ public class PuzzlePickup : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag("Player")) return;
 
         playerInside = false;
         playerTf = null;
 
-        if (glow != null) glow.Hide();
+        if (glow != null)
+            glow.Hide();
     }
 
     private void TryPickup()
     {
-        if (progress != null) progress.UnlockPiece(pieceIndex);
-        if (pickupSfx != null) pickupSfx.Play();
+        if (collected) return;
 
-        if (glow != null) glow.Hide();
-        if (puzzleVisual != null) puzzleVisual.SetActive(false);
+        collected = true;
 
-        if (destroyOnPickup) Destroy(gameObject);
+        if (progress != null)
+            progress.UnlockPiece(pieceIndex);
+
+        AutumnPuzzleStart autumnStart = GetComponent<AutumnPuzzleStart>();
+        if (autumnStart != null)
+            autumnStart.TriggerLeafInstruction();
+
+        if (pickupSfx != null)
+            pickupSfx.Play();
+
+        if (glow != null)
+            glow.Hide();
+
+        if (puzzleVisual != null)
+            puzzleVisual.SetActive(false);
+
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+            col.enabled = false;
+
+        if (destroyOnPickup)
+            Destroy(gameObject);
     }
 }
