@@ -11,6 +11,8 @@ public class BGMManager : MonoBehaviour
     [Range(0f, 1f)] public float volume = 0.35f;
     public bool playOnStart = true;
 
+    public AudioClip CurrentClip => audioSource != null ? audioSource.clip : null;
+
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -47,10 +49,15 @@ public class BGMManager : MonoBehaviour
     {
         if (audioSource == null) return;
 
-        if (clip != null && audioSource.clip != clip)
-            audioSource.clip = clip;
+        bool changedClip = clip != null && audioSource.clip != clip;
 
-        if (audioSource.clip != null && !audioSource.isPlaying)
+        if (clip != null && audioSource.clip != clip)
+        {
+            audioSource.clip = clip;
+            audioSource.Stop();
+        }
+
+        if (audioSource.clip != null && (!audioSource.isPlaying || changedClip))
             audioSource.Play();
     }
 
