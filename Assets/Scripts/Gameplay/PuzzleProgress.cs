@@ -13,6 +13,9 @@ public class PuzzleProgress : MonoBehaviour
     [Header("Unlocked Puzzle Sprites (4 pieces)")]
     public Sprite[] unlockedSprites = new Sprite[4];
 
+    [Header("Reward Animation")]
+    public PuzzleRewardAnimator rewardAnimator;
+
     private bool[] unlocked = new bool[4];
 
     private void Awake()
@@ -69,6 +72,8 @@ public class PuzzleProgress : MonoBehaviour
         }
 
         SetUnlocked(index);
+        if (rewardAnimator != null)
+            rewardAnimator.Play(index);
     }
 
     public bool IsUnlocked(int index)
