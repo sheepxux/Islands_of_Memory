@@ -16,6 +16,9 @@ public class PuzzleProgress : MonoBehaviour
     [Header("Reward Animation")]
     public PuzzleRewardAnimator rewardAnimator;
 
+    [Header("Ending")]
+    public EndingManager endingManager;
+
     private bool[] unlocked = new bool[4];
 
     private void Awake()
@@ -74,6 +77,9 @@ public class PuzzleProgress : MonoBehaviour
         SetUnlocked(index);
         if (rewardAnimator != null)
             rewardAnimator.Play(index);
+
+        if (AllPiecesUnlocked() && endingManager != null)
+            endingManager.ShowEnding();
     }
 
     public bool IsUnlocked(int index)
@@ -83,4 +89,15 @@ public class PuzzleProgress : MonoBehaviour
     }
 
     private bool IsValidIndex(int index) => index >= 0 && index < 4;
+
+    private bool AllPiecesUnlocked()
+    {
+        for (int i = 0; i < unlocked.Length; i++)
+        {
+            if (!unlocked[i])
+                return false;
+        }
+
+        return true;
+    }
 }
