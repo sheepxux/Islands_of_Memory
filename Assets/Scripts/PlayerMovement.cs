@@ -97,6 +97,22 @@ public class PlayerMovement : MonoBehaviour
         UpdateActionId(input, sprint, grounded);
     }
 
+    public void ResetMotion()
+    {
+        if (controller == null)
+            controller = GetComponent<CharacterController>();
+
+        if (actionIdHash == 0)
+            actionIdHash = Animator.StringToHash(actionIdParam);
+
+        velocity = Vector3.zero;
+        landLockTimer = 0f;
+        wasGrounded = controller == null || controller.isGrounded;
+
+        if (rigAnimator != null)
+            rigAnimator.SetInteger(actionIdHash, ID_IDLE_STAND);
+    }
+
     private void UpdateActionId(Vector3 input, bool sprint, bool grounded)
     {
         if (rigAnimator == null) return;

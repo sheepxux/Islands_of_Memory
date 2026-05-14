@@ -34,6 +34,7 @@ public class GuideOrbAI : MonoBehaviour
     void Update()
     {
         if (player == null || agent == null) return;
+        if (!agent.enabled || !agent.isOnNavMesh) return;
 
         switch (state)
         {
@@ -61,7 +62,7 @@ public class GuideOrbAI : MonoBehaviour
         desired.y = player.position.y;
 
         agent.isStopped = false;
-        agent.SetDestination(desired);
+        TrySetDestination(desired);
     }
 
     void TickLeadToTarget()
@@ -73,7 +74,7 @@ public class GuideOrbAI : MonoBehaviour
         }
 
         agent.isStopped = false;
-        agent.SetDestination(targetPoint.position);
+        TrySetDestination(targetPoint.position);
 
         if (agent.pathPending) return;
 
@@ -96,15 +97,36 @@ public class GuideOrbAI : MonoBehaviour
 
     public void LeadTo(Transform newTarget)
     {
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
+        if (agent == null) return;
+
         targetPoint = newTarget;
         state = State.LeadToTarget;
-        agent.isStopped = false;
+        if (agent.enabled && agent.isOnNavMesh)
+            agent.isStopped = false;
     }
 
     public void BackToPlayer()
     {
+        if (agent == null) agent = GetComponent<NavMeshAgent>();
+
         targetPoint = null;
         state = State.FollowPlayer;
-        agent.isStopped = false;
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+            agent.isStopped = false;
+    }
+
+    private bool TrySetDestination(Vector3 destination)
+    {
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return false;
+
+        if (NavMesh.SamplePosition(destination, out NavMeshHit hit, 2f, agent.areaMask))
+        {
+            agent.SetDestination(hit.position);
+            return true;
+        }
+
+        return false;
     }
 }

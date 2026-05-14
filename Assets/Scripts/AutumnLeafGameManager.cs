@@ -5,11 +5,12 @@ using System.Collections;
 public class AutumnLeafGameManager : MonoBehaviour
 {
     [Header("Leaf Settings")]
-    public int totalLeaves = 6;
+    public int totalLeaves = 4;
 
     [Header("UI")]
     public TextMeshProUGUI progressText;
     public TextMeshProUGUI completeText;
+    public GameObject progressIcon;
 
     [Header("Game Objects")]
     public GameObject instructionUI;
@@ -19,12 +20,14 @@ public class AutumnLeafGameManager : MonoBehaviour
     private int collectedLeaves;
     private bool showingInstruction;
     private bool gameStarted;
+    private bool rewardUnlocked;
 
     private void Start()
     {
         collectedLeaves = 0;
         showingInstruction = false;
         gameStarted = false;
+        rewardUnlocked = false;
 
         if (instructionUI != null)
             instructionUI.SetActive(false);
@@ -37,6 +40,9 @@ public class AutumnLeafGameManager : MonoBehaviour
 
         if (progressText != null)
             progressText.gameObject.SetActive(false);
+
+        if (progressIcon != null)
+            progressIcon.SetActive(false);
 
         if (completeText != null)
             completeText.gameObject.SetActive(false);
@@ -76,12 +82,16 @@ public class AutumnLeafGameManager : MonoBehaviour
         if (progressText != null)
             progressText.gameObject.SetActive(true);
 
+        if (progressIcon != null)
+            progressIcon.SetActive(true);
+
         UpdateUI();
     }
 
     public void CollectLeaf()
     {
         if (!gameStarted) return;
+        if (rewardUnlocked) return;
 
         collectedLeaves++;
         collectedLeaves = Mathf.Clamp(collectedLeaves, 0, totalLeaves);
@@ -102,8 +112,17 @@ public class AutumnLeafGameManager : MonoBehaviour
 
     private void UnlockReward()
     {
+        if (rewardUnlocked) return;
+        rewardUnlocked = true;
+
         if (progressText != null)
             progressText.gameObject.SetActive(false);
+
+        if (progressIcon != null)
+            progressIcon.SetActive(false);
+
+        if (leavesRoot != null)
+            leavesRoot.SetActive(false);
 
         if (completeText != null)
         {

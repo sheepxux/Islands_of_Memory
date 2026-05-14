@@ -16,6 +16,9 @@ public class BoatBoarding : MonoBehaviour
     public Transform boatForwardRef;
     public GameObject player;
 
+    [Header("Respawn")]
+    public RespawnManager respawnManager;
+
     [Header("Boat Hint (optional)")]
     public BoatHintTimed boatHint;
 
@@ -61,6 +64,9 @@ public class BoatBoarding : MonoBehaviour
 
         if (boatController != null)
             boatController.enabled = false;
+
+        if (respawnManager == null)
+            respawnManager = FindFirstObjectByType<RespawnManager>();
     }
 
     private void Update()
@@ -141,6 +147,9 @@ public class BoatBoarding : MonoBehaviour
         player.transform.SetParent(null, true);
         player.transform.position = exitT.position;
         player.transform.rotation = exitT.rotation;
+
+        if (respawnManager != null)
+            respawnManager.SetRespawnPoint(exitT);
 
         if (playerCC != null) playerCC.enabled = true;
         if (playerMovement != null) playerMovement.enabled = true;
