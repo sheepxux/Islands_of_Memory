@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.AI;
 
 public class NPCFacingHint : MonoBehaviour
 {
@@ -8,16 +9,31 @@ public class NPCFacingHint : MonoBehaviour
     public Transform npcVisualRoot;
     public Canvas hintCanvas;
     public TMP_Text hintText;
+    public NavMeshAgent agent;
 
     [Header("Behavior")]
     public string inRangeText = "Press E to board";
     public float turnSpeed = 8f;
     public bool facePlayerWhenInRange = true;
+    public bool faceOnlyWhenStopped = true;
+    public float stoppedSpeedThreshold = 0.08f;
 
     private bool playerInRange;
+    public bool PlayerInRange => playerInRange;
+
+    public void SetInRangeText(string text)
+    {
+        inRangeText = text;
+
+        if (hintText != null)
+            hintText.text = inRangeText;
+    }
 
     void Awake()
     {
+        if (agent == null)
+            agent = GetComponent<NavMeshAgent>();
+
         if (hintCanvas != null) hintCanvas.enabled = false;
         if (hintText != null) hintText.text = inRangeText;
     }
@@ -26,6 +42,7 @@ public class NPCFacingHint : MonoBehaviour
     {
         if (!playerInRange) return;
         if (!facePlayerWhenInRange) return;
+        if (faceOnlyWhenStopped && !IsStopped()) return;
         if (player == null || npcVisualRoot == null) return;
 
         Vector3 dir = player.position - npcVisualRoot.position;
@@ -47,7 +64,7 @@ public class NPCFacingHint : MonoBehaviour
         if (other.transform != player) return;
 
         playerInRange = true;
-        if (hintText != null) hintText.text = inRangeText;
+        SetInRangeText(inRangeText);
         if (hintCanvas != null) hintCanvas.enabled = true;
     }
 
@@ -58,5 +75,13 @@ public class NPCFacingHint : MonoBehaviour
 
         playerInRange = false;
         if (hintCanvas != null) hintCanvas.enabled = false;
+    }
+
+    private bool IsStopped()
+    {
+        if (agent == null) return true;
+        if (!agent.enabled || !agent.isOnNavMesh) return true;
+
+        return agent.isStopped || agent.velocity.sqrMagnitude <= stoppedSpeedThreshold * stoppedSpeedThreshold;
     }
 }

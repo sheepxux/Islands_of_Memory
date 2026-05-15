@@ -26,6 +26,7 @@ public class BoatBoarding : MonoBehaviour
     public KeyCode interactKey = KeyCode.E;
 
     [Header("Rules")]
+    public bool boardingAllowed = true;
     public bool onlyExitAtDock = true;
 
     [Header("Debug")]
@@ -40,6 +41,11 @@ public class BoatBoarding : MonoBehaviour
     private DockZone currentDock;
 
     public bool IsInBoat() => inBoat;
+
+    public void SetBoardingAllowed(bool allowed)
+    {
+        boardingAllowed = allowed;
+    }
 
     private void Awake()
     {
@@ -78,6 +84,12 @@ public class BoatBoarding : MonoBehaviour
             if (!playerInRange)
             {
                 if (logDebug) Debug.Log("[BoatBoarding] Not in BoardZone range.");
+                return;
+            }
+
+            if (!boardingAllowed)
+            {
+                if (logDebug) Debug.Log("[BoatBoarding] Boarding is locked.");
                 return;
             }
 

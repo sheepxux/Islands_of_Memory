@@ -2963,7 +2963,7 @@ RectTransform:
   m_GameObject: {fileID: 268675364}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
-  m_LocalScale: {x: 2.5, y: 2, z: 1}
+  m_LocalScale: {x: 2.5, y: 3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1371582570}
@@ -10896,6 +10896,7 @@ GameObject:
   - component: {fileID: 1105628597}
   - component: {fileID: 1105628601}
   - component: {fileID: 1105628600}
+  - component: {fileID: 1105628602}
   m_Layer: 0
   m_Name: GuideOrb
   m_TagString: Untagged
@@ -10977,9 +10978,12 @@ MonoBehaviour:
   npcVisualRoot: {fileID: 1882961489}
   hintCanvas: {fileID: 1371582573}
   hintText: {fileID: 1748910931}
+  agent: {fileID: 1105628598}
   inRangeText: Press E to board
   turnSpeed: 8
   facePlayerWhenInRange: 1
+  faceOnlyWhenStopped: 1
+  stoppedSpeedThreshold: 0.08
 --- !u!135 &1105628601
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -11001,6 +11005,34 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1105628602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1105628596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 907729b939a04c17a82291f375f7ddbc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NPCIntroDialogue
+  hint: {fileID: 1105628600}
+  boatBoarding: {fileID: 1894300668}
+  guide: {fileID: 1105628597}
+  interactKey: 101
+  talkPrompt: Press E to talk
+  boardPrompt: Press E to board
+  dialogueLines:
+  - The boat is ready,
+  - but my memories feel far away today.
+  - Will you stay with me?
+  - And help me find them again?
+  autoCompleteAfterFinalLine: 1
+  finalLineHoldTime: 2
+  pauseGuideUntilComplete: 1
+  facePlayerDuringDialogue: 1
+  facePlayerAfterDialogue: 1
 --- !u!1 &1113379096
 GameObject:
   m_ObjectHideFlags: 0
@@ -16613,7 +16645,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 178.753, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 23, y: -44}
+  m_AnchoredPosition: {x: 23, y: -25}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1753758228 stripped
@@ -17198,10 +17230,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GuideNPCAnimator
   agent: {fileID: 1105628598}
   animator: {fileID: 1871993846}
+  visualRoot: {fileID: 1882961489}
   actionIdParam: actionID
   idleId: 11
   walkId: 21
   moveSpeedThreshold: 0.1
+  faceMovementDirection: 1
+  turnSpeed: 10
+  yawOffset: 0
 --- !u!1001 &1881282430
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17578,10 +17614,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GuideNPCAnimator
   agent: {fileID: 1105628598}
   animator: {fileID: 1871993846}
+  visualRoot: {fileID: 0}
   actionIdParam: actionID
   idleId: 11
   walkId: 21
   moveSpeedThreshold: 0.15
+  faceMovementDirection: 1
+  turnSpeed: 10
+  yawOffset: 0
 --- !u!1 &1891480133
 GameObject:
   m_ObjectHideFlags: 0
@@ -17712,6 +17752,7 @@ MonoBehaviour:
   respawnManager: {fileID: 0}
   boatHint: {fileID: 1650172345}
   interactKey: 101
+  boardingAllowed: 1
   onlyExitAtDock: 1
   logDebug: 0
 --- !u!114 &1894300669
